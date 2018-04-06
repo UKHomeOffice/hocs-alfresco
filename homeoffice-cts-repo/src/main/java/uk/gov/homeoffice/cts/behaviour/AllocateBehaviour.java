@@ -9,6 +9,9 @@ import org.alfresco.service.cmr.security.*;
 import org.alfresco.service.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import uk.gov.homeoffice.cts.email.EmailService;
 import uk.gov.homeoffice.cts.helpers.CtsFolderHelper;
 import uk.gov.homeoffice.cts.model.CaseStatus;
@@ -31,7 +34,9 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
     private AuthorityService authorityService;
     private CtsFolderHelper ctsFolderHelper;
     private String workFlowEmailTemplateId;
-
+    private String workFlowTeamEmailTemplateId;
+    private String ctsUrl;
+    private String dataServiceEndpoint;
 
 
     @Override
@@ -69,18 +74,18 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
             LOGGER.debug(nodeRef + "Assigned user has changed so send email. Assigned User Before: " + assignedUserBefore + " Assigned User After: " + assignedUserAfter);
             //then see if that user wants the email or not
             sendEmailToUser(nodeRef, after);
-//        } else if (assignedTeamAfter != null && BehaviourHelper.hasChanged(assignedTeamBefore, assignedTeamAfter)) {
-//            LOGGER.debug(nodeRef + " Assigned Team Before: " + assignedTeamBefore + " Assigned Team After: " + assignedTeamAfter);
-//            //send to group
-//            if (assignedUserAfter == null) {
-//                sendEmailToGroup(assignedTeamAfter, nodeRef, after);
-//            }
-//        } else if (assignedUnitAfter != null && BehaviourHelper.hasChanged(assignedUnitBefore, assignedUnitAfter)) {
-//            LOGGER.debug(nodeRef + " Assigned Unit Before: " + assignedUnitBefore + " Assigned Unit After: " + assignedUnitAfter);
-//            //send to group
-//            if (assignedTeamAfter == null && assignedUserAfter == null) {
-//                sendEmailToGroup(assignedUnitAfter, nodeRef, after);
-//            }
+        } else if (assignedTeamAfter != null && BehaviourHelper.hasChanged(assignedTeamBefore, assignedTeamAfter)) {
+            LOGGER.debug(nodeRef + " Assigned Team Before: " + assignedTeamBefore + " Assigned Team After: " + assignedTeamAfter);
+            //send to group
+            if (assignedUserAfter == null) {
+                sendEmailToGroup(assignedTeamAfter, nodeRef, after);
+            }
+        } else if (assignedUnitAfter != null && BehaviourHelper.hasChanged(assignedUnitBefore, assignedUnitAfter)) {
+            LOGGER.debug(nodeRef + " Assigned Unit Before: " + assignedUnitBefore + " Assigned Unit After: " + assignedUnitAfter);
+            //send to group
+            if (assignedTeamAfter == null && assignedUserAfter == null) {
+                sendEmailToGroup(assignedUnitAfter, nodeRef, after);
+            }
         }
     }
 
@@ -101,9 +106,9 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
             //the case gets assigned to the creator as part of the creation process so don't send them an email
             return;
         } else {
-            LOGGER.debug("building Notify properties");
-            LOGGER.debug("user = " + (String) after.get(CtsModel.PROP_ASSIGNED_USER));
-            LOGGER.debug("link = " + getCtsUrl() + "/cts/cases/view/" + nodeRef.getId());
+//            LOGGER.debug("building Notify properties");
+//            LOGGER.debug("user = " + after.get(CtsModel.PROP_ASSIGNED_USER).toString());
+//            LOGGER.debug("link = " + getCtsUrl() + "/cts/cases/view/" + nodeRef.getId());
             NodeRef personNodeRef;
             try {
                 personNodeRef = getPersonService().getPerson(assignedUserAfter);
@@ -115,15 +120,13 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
                 return;
             }
             Map<QName, Serializable> personProps = getNodeService().getProperties(personNodeRef);
-            String emailAddress = (String) personProps.get(ContentModel.PROP_EMAIL);
-            LOGGER.debug("emailAddress = " + emailAddress);
+            String emailAddress = personProps.get(ContentModel.PROP_EMAIL).toString();
             HashMap<String, String> personalisation = new HashMap<>();
-            personalisation.put("user", (String) after.get(CtsModel.PROP_ASSIGNED_USER));
+            personalisation.put("user", after.get(CtsModel.PROP_ASSIGNED_USER).toString());
             personalisation.put("link", getCtsUrl() + "/cts/cases/view/" + nodeRef.getId());
-            LOGGER.debug("templateid = " + getWorkFlowEmailTemplateId() + " | emailAddress = " + emailAddress + " | Personalisation = "+ personalisation);
+            LOGGER.debug("templateid = " + getWorkFlowEmailTemplateId() + " | emailAddress = " + emailAddress + " | Personalisation = " + personalisation);
             emailService.sendEmail(getWorkFlowEmailTemplateId(), emailAddress, personalisation);
             LOGGER.debug("After email send");
-//        sendEmail(assignedUserAfter, nodeRef, "user", null, after);
         }
     }
 
@@ -134,20 +137,22 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
             //don't go on
             return;
         }
+        RestTemplate restTemplate = new RestTemplate();
 
-        Set<String> groupUsers = getAuthorityService().getContainedAuthorities(AuthorityType.USER, assignedGroupAfter, true);
+        try {
+            ResponseEntity<AllocateBehaviourTeamEmail> teamEmailResponseEntity =  restTemplate.getForEntity(getDataServiceEndpoint() + "/team/" + after.get(CtsModel.PROP_ASSIGNED_TEAM), AllocateBehaviourTeamEmail.class);
 
-        LOGGER.info("Group email function disabled");
-//        for (String user : groupUsers) {
-//            NodeRef personNodeRef = getPersonService().getPerson(user);
-//            Map<QName, Serializable> personProps = getNodeService().getProperties(personNodeRef);
-//            String emailAddress = (String) personProps.get(ContentModel.PROP_EMAIL);
-//            HashMap<String, String> personalisation = new HashMap<>();
-//            personalisation.put("user", (String) personProps.get(ContentModel.PROP_FIRSTNAME));
-//            personalisation.put("link", getCtsUrl() + "/cts/cases/view/" + nodeRef.getId());
-//
-//            emailService.sendEmail(getWorkFlowEmailTemplateId(), emailAddress, personalisation);
-//        }
+            HashMap<String, String> personalisation = new HashMap<>();
+            personalisation.put("user", teamEmailResponseEntity.getBody().displayName);
+            personalisation.put("link", getCtsUrl() + "/cts/cases/view/" + nodeRef.getId());
+
+            LOGGER.debug("templateid = " + getWorkFlowTeamEmailTemplateId() + " | emailAddress = " + teamEmailResponseEntity.getBody().email + " | Personalisation = " + personalisation);
+            emailService.sendEmail(getWorkFlowTeamEmailTemplateId(), teamEmailResponseEntity.getBody().email, personalisation);
+        } catch (RestClientException e) {
+            LOGGER.debug("Error when trying to get team email address from data service, email not sent to team");
+//            e.printStackTrace();
+        }
+
     }
 
 
@@ -344,8 +349,6 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
         this.ctsUrl = ctsUrl;
     }
 
-    private String ctsUrl;
-
     private CtsFolderHelper getCtsFolderHelper() {
         return ctsFolderHelper;
     }
@@ -362,6 +365,14 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
         this.permissionService = permissionService;
     }
 
+    public String getDataServiceEndpoint() {
+        return dataServiceEndpoint;
+    }
+
+    public void setDataServiceEndpoint(String dataServiceEndpoint) {
+        this.dataServiceEndpoint = dataServiceEndpoint;
+    }
+
     public EmailService getEmailService() {
         return emailService;
     }
@@ -376,6 +387,14 @@ public class AllocateBehaviour implements PropertyUpdateBehaviour {
 
     public void setWorkFlowEmailTemplateId(String workFlowEmailTemplateId) {
         this.workFlowEmailTemplateId = workFlowEmailTemplateId;
+    }
+
+    public String getWorkFlowTeamEmailTemplateId() {
+        return workFlowTeamEmailTemplateId;
+    }
+
+    public void setWorkFlowTeamEmailTemplateId(String workFlowTeamEmailTemplateId) {
+        this.workFlowTeamEmailTemplateId = workFlowTeamEmailTemplateId;
     }
 }
 

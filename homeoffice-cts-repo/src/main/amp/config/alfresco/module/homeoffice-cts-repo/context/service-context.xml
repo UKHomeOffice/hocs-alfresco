@@ -322,6 +322,12 @@
         <property name="workFlowEmailTemplateId">
             <value>${notify.workFlowEmailTemplateId}</value>
         </property>
+        <property name="workFlowTeamEmailTemplateId">
+            <value>${notify.workFlowTeamEmailTemplateId}</value>
+        </property>
+        <property name="dataServiceEndpoint">
+            <value>${dataService.endpoint}</value>
+        </property>
     </bean>
 
 
