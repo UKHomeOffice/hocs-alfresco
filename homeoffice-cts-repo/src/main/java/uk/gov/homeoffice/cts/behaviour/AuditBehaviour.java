@@ -93,9 +93,6 @@ public class AuditBehaviour implements PropertyUpdateBehaviour {
 
     private void postMessage(AuditMessage auditMessage) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
 
-        LOGGER.info("Preparing Reporting Event");
-
-
         try {
             String str = objectMapper.writeValueAsString(auditMessage);
             sendViaRest(str);
