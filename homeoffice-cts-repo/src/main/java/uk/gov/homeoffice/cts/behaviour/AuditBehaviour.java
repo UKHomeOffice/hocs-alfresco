@@ -34,13 +34,35 @@ public class AuditBehaviour implements PropertyUpdateBehaviour {
     @Override
     public void onUpdateProperties(final NodeRef nodeRef, final Map<QName, Serializable> before, final Map<QName, Serializable> after) {
 
-        // allow alfresco to run without reporting service
-        if(getReportingEndpoint() != null && !getReportingEndpoint().equals("")) {
-            try {
-                AuditMessage auditMessage = new AuditMessage(after);
-                postMessage(auditMessage);
-            } catch (Exception e) {
-                e.printStackTrace();
+        LOGGER.info("Preparing Reporting Event");
+
+        if(nodeRef == null){
+            LOGGER.info("nodeRef is null");
+        } else {
+            LOGGER.info("nodeRef " + nodeRef.toString());
+        }
+
+        if(before == null){
+            LOGGER.info("before is null");
+        } else {
+            LOGGER.info("before " + before.size());
+        }
+
+        if(after == null){
+            LOGGER.info("after is null");
+        } else {
+            LOGGER.info("after " + after.size());
+        }
+
+        if(after != null) {
+            // allow alfresco to run without reporting service
+            if (getReportingEndpoint() != null && !getReportingEndpoint().equals("")) {
+                try {
+                    AuditMessage auditMessage = new AuditMessage(after);
+                    postMessage(auditMessage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -71,10 +93,10 @@ public class AuditBehaviour implements PropertyUpdateBehaviour {
 
     private void postMessage(AuditMessage auditMessage) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
 
+        LOGGER.info("Preparing Reporting Event");
+
+
         try {
-
-            LOGGER.info("Sending Reporting Event");
-
             String str = objectMapper.writeValueAsString(auditMessage);
             sendViaRest(str);
         } catch (JsonProcessingException e) {
@@ -89,6 +111,7 @@ public class AuditBehaviour implements PropertyUpdateBehaviour {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpEntity = new HttpEntity<>(msg, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(reportingEndpoint+ "/event/add", HttpMethod.POST, httpEntity, String.class);
+
         if(response.getStatusCode() != HttpStatus.OK)
         {
             System.out.println("Sent via Rest FAILED");
