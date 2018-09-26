@@ -263,7 +263,60 @@
         </dependency>
 
 
+        <!-- Added local dependencies for JARS no longer available in Alfresco maven repo -->
 
+
+        <dependency>
+            <groupId>org.springframework.extensions.surf</groupId>
+            <artifactId>spring-webscripts-api</artifactId>
+            <version>1.2.0-M14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-webscripts-api-1.2.0-M14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.extensions.surf</groupId>
+            <artifactId>spring-webscripts</artifactId>
+            <version>1.2.0-M14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-webscripts-1.2.0-M14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.extensions.surf</groupId>
+            <artifactId>spring-surf-core-configservice</artifactId>
+            <version>1.2.0-M14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-surf-core-configservice-1.2.0-M14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.extensions.surf</groupId>
+            <artifactId>spring-cmis-framework</artifactId>
+            <version>1.2.0-M14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-cmis-framework-1.2.0-M14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-facebook</artifactId>
+            <version>1.0.0.RC1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-social-facebook-1.0.0.RC1.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.extensions.surf</groupId>
+            <artifactId>spring-surf</artifactId>
+            <version>1.2.0-M14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-surf-1.2.0-M14.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.extensions.surf</groupId>
+            <artifactId>spring-surf-core</artifactId>
+            <version>1.2.0-M14</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/spring-surf-core-1.2.0-M14.jar</systemPath>
+        </dependency>
 
     </dependencies>
 
@@ -279,6 +332,10 @@
         <repository>
             <id>alfresco-public</id>
             <url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
         </repository>
         <repository>
             <id>raven-log4j</id>

@@ -1,6 +1,7 @@
 FROM quay.io/ukhomeofficedigital/openjdk8
 
 ENV USER alfresco
+ENV USER_ID 1000
 ENV GROUP alfresco
 
 RUN yum update -y \
@@ -72,7 +73,7 @@ COPY assets/alfresco/entrypoint.sh entrypoint.sh
 RUN bash ./bin/apply_amps.sh -force -nobackup && chmod +x  entrypoint.sh
 
 RUN groupadd -r ${GROUP} && \
-    useradd -r -g ${GROUP} ${USER} -d $ALF_HOME && \
+    useradd -r -u ${USER_ID} -g ${GROUP} ${USER} -d $ALF_HOME  && \
     chown -R ${USER}:${GROUP} $ALF_HOME && \
     chown -R ${USER}:${GROUP} /usr/local/tomcat && \
     chown -R ${USER}:${GROUP} /usr/local/alfresco/
@@ -81,6 +82,6 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE 8080
 
-USER ${USER}
+USER ${USER_ID}
 
 CMD ["catalina.sh", "run"]
