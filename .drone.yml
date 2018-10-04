@@ -29,8 +29,8 @@ pipeline:
     - docker_password
     commands:
     - docker login -u="ukhomeofficedigital+hocs" -p=$${DOCKER_PASSWORD} quay.io
-    - docker tag hocs-casework quay.io/ukhomeofficedigital/hocs-alfresco:build-$${DRONE_BUILD_NUMBER}
-    - docker tag hocs-casework quay.io/ukhomeofficedigital/hocs-alfresco:latest
+    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:build-$${DRONE_BUILD_NUMBER}
+    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:latest
     - docker push quay.io/ukhomeofficedigital/hocs-alfresco:build-$${DRONE_BUILD_NUMBER}
     - docker push quay.io/ukhomeofficedigital/hocs-alfresco:latest
     when:
