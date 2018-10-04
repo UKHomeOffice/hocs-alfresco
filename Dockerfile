@@ -4,8 +4,7 @@ ENV USER alfresco
 ENV USER_ID 1000
 ENV GROUP alfresco
 
-RUN yum update -y \
-    && yum install -y unzip sed zip tar mysql libreoffice-headless libreoffice-draw libreoffice-impress libreoffice-writer libreoffice-calc \
+RUN yum install -y unzip sed zip tar mysql libreoffice-headless libreoffice-draw libreoffice-impress libreoffice-writer libreoffice-calc \
     && yum clean all
 
 ENV ALF_DOWNLOAD_URL https://download.alfresco.com/release/community/4.2.f-build-00012/alfresco-community-4.2.f.zip
