@@ -159,12 +159,6 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
-        <dependency> <!-- Really shouldn't need this... -->
-            <groupId>org.apache.chemistry</groupId>
-            <artifactId>chemistry-tck-atompub</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>${alfresco.groupId}</groupId>
             <artifactId>alfresco-remote-api</artifactId>
