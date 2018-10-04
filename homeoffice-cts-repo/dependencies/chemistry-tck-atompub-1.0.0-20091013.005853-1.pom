@@ -1,0 +1,167 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.apache.chemistry</groupId>
+	<artifactId>chemistry-tck-atompub</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>chemistry-tck-atompub</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+		</dependency>
+        <dependency>
+          <!-- NOTE: use recent xerces for validating CMIS schema -->
+          <!--       which uses xsi:type. Fails with JDK 5 xerces -->
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+          <version>2.9.1</version>
+        </dependency>
+		<dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>abdera-core</artifactId>
+			<groupId>org.apache.abdera</groupId>
+			<version>0.4.0-incubating</version>
+		</dependency>
+		<dependency>
+			<artifactId>abdera-extensions-json</artifactId>
+			<groupId>org.apache.abdera</groupId>
+			<version>0.4.0-incubating</version>
+		</dependency>
+		<dependency>
+			<artifactId>abdera-parser</artifactId>
+			<groupId>org.apache.abdera</groupId>
+			<version>0.4.0-incubating</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<port>8081</port>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+				    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<systemProperties>
+						<property>
+		                    <!-- NOTE: use recent xerces for validating CMIS schema -->
+		                    <!--       which uses xsi:type. Fails with JDK 5 xerces -->
+							<name>javax.xml.parsers.DocumentBuilderFactory</name>
+							<value>org.apache.xerces.jaxp.DocumentBuilderFactoryImpl</value>
+						</property>
+						<property>
+		                    <!-- NOTE: use recent xerces for validating CMIS schema -->
+		                    <!--       which uses xsi:type. Fails with JDK 5 xerces -->
+							<name>javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema</name>
+							<value>org.apache.xerces.jaxp.SAXParserFactoryImpl</value>
+						</property>
+						<property>
+							<name>chemistry.tck.validate</name>
+							<value>true</value>
+						</property>
+                        <property>
+                            <name>chemistry.tck.failOnValidationError</name>
+                            <value>false</value>
+                        </property>
+						<property>
+							<name>chemistry.tck.traceRequests</name>
+							<value>false</value>
+						</property>
+					</systemProperties>
+					<skipTests>true</skipTests>
+					<excludes>
+	                    <!-- NOTE: Exclude tests based on custom types until solution -->
+	                    <!--       for registering types on a per server basis -->
+                        <exclude>**/test/custom/**/*.java</exclude>
+                    </excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+        <distributionManagement>
+                <repository>
+                        <id>alfresco-thirdparty</id>
+                        <name>Alfresco Thirdparty Repository</name>
+                        <url>http://pnex01.alfresco.com:8080/nexus/content/repositories/thirdparty/</url>
+                </repository>
+                        <snapshotRepository> <id>alfresco-snapshots</id> <name>Alfresco
+                        Snapshots Repository</name>
+                        <url>http://pnex01.alfresco.com:8080/nexus/content/repositories/snapshots/</url>
+                        </snapshotRepository>
+                <!--
+		<snapshotRepository>
+                        <id>sose-alfresco-private</id>
+                        <name>Alfresco Snapshots on Sourcesense Private repo</name>
+                        <url>http://repository.sourcesense.com/nexus/content/repositories/private-alfresco</url>
+                </snapshotRepository>
+		-->
+                <site>
+                        <id>alfresco-docs</id>
+                        <name>Alfresco Maven documentation sites repository</name>
+                        <url>http://pnex01.alfresco.com:8080/nexus/content/repositories/alfresco-docs/${groupId}.${artifactId}</url>
+                </site>
+        </distributionManagement>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>		
+		</plugins>
+	</reporting>
+	<profiles>
+		<profile>
+			<id>alfresco</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>false</skipTests>
+							<systemProperties>
+								<property>
+									<name>chemistry.tck.serviceUrl</name>
+									<value>http://localhost:8080/alfresco/service/api/cmis</value>
+								</property>
+								<property>
+									<name>chemistry.tck.user</name>
+									<value>admin</value>
+								</property>
+								<property>
+									<name>chemistry.tck.password</name>
+									<value>admin</value>
+								</property>
+							</systemProperties>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
