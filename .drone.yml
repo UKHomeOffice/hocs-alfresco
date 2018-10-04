@@ -3,9 +3,12 @@ pipeline:
   build-project:
     image: quay.io/ukhomeofficedigital/java8-mvn
     commands:
-    - mvn clean package -DskipTests=true -DPROJECT_VERSION=1 -DBUILD_NUMBER=$${DRONE_BUILD_NUMBER}
+      - mvn -B -q clean package -DskipTests=true -DPROJECT_VERSION=1 -DBUILD_NUMBER=${DRONE_BUILD_NUMBER}
     when:
       event: [push, pull_request, tag]
+    secrets:
+      - artifactory_username
+      - artifactory_password
 
 
   docker-build:
