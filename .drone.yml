@@ -3,7 +3,7 @@ pipeline:
   build-project:
     image: quay.io/ukhomeofficedigital/java8-mvn
     commands:
-    - mvn clean package -DskipTests=true -DPROJECT_VERSION=1 -DBUILD_NUMBER=${DRONE_BUILD_NUMBER}
+    - mvn clean package -DskipTests=true -DPROJECT_VERSION=1 -DBUILD_NUMBER=$${DRONE_BUILD_NUMBER}
     when:
       event: [push, pull_request, tag]
 
@@ -42,8 +42,8 @@ pipeline:
     - docker_password
     commands:
     - docker login -u="ukhomeofficedigital+hocs" -p=$${DOCKER_PASSWORD} quay.io
-    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:${DRONE_TAG}
-    - docker push quay.io/ukhomeofficedigital/hocs-alfresco:${DRONE_TAG}
+    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:$${DRONE_TAG}
+    - docker push quay.io/ukhomeofficedigital/hocs-alfresco:$${DRONE_TAG}
     when:
       event: tag
 
@@ -59,7 +59,7 @@ pipeline:
     environment:
     - KUBE_NAMESPACE=alf-dev
     - ENVIRONMENT=dev
-    - VERSION=build-${DRONE_BUILD_NUMBER}
+    - VERSION=build-$${DRONE_BUILD_NUMBER}
     - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk
     secrets:
     - hocs_alfresco_dev
@@ -73,8 +73,8 @@ pipeline:
   deployment:
     image: quay.io/ukhomeofficedigital/kd:v0.8.0
     environment:
-    - KUBE_NAMESPACE=alf-${DRONE_DEPLOY_TO}
-    - ENVIRONMENT=${DRONE_DEPLOY_TO}
+    - KUBE_NAMESPACE=alf-$${DRONE_DEPLOY_TO}
+    - ENVIRONMENT=$${DRONE_DEPLOY_TO}
     - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk
     secrets:
     - hocs_alfresco_dev
@@ -91,7 +91,7 @@ pipeline:
     environment:
     - KUBE_NAMESPACE=alf-prod
     - ENVIRONMENT=prod
-    - VERSION=${IMAGE_VERSION}
+    - VERSION=$${IMAGE_VERSION}
     - KUBE_SERVER=https://kube-api-prod.prod.acp.homeoffice.gov.uk
     secrets:
     - hocs_alfresco_prod
