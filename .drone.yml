@@ -3,19 +3,19 @@ pipeline:
     privileged: true
     image: quay.io/ukhomeofficedigital/java8-mvn:v3.3.9.3
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
+    - DOCKER_HOST=tcp://127.0.0.1:2375
     commands:
-      - mvn -B -q clean package -DskipTests=true -DPROJECT_VERSION=1 -DBUILD_NUMBER=${DRONE_BUILD_NUMBER}
+    - mvn -B -q clean package -DskipTests=true -DPROJECT_VERSION=1 -DBUILD_NUMBER=${DRONE_BUILD_NUMBER}
     when:
-     event: [push, pull_request, tag]
+      event: [push, pull_request, tag]
 
   docker-build:
     privileged: true
     image: docker:1.11
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
+    - DOCKER_HOST=tcp://127.0.0.1:2375
     commands:
-      - docker build -t hocs-alfresco .
+    - docker build -t hocs-alfresco .
     when:
       branch: [master, refs/tags/*]
       event: [push, tag]
@@ -23,13 +23,13 @@ pipeline:
   push:
     image: docker:1.11
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
+    - DOCKER_HOST=tcp://127.0.0.1:2375
     commands:
-      - docker login -u="ukhomeofficedigital+hocs_alfresco" -p=${DOCKER_PASSWORD} quay.io
-      - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco
-      - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:build-${DRONE_BUILD_NUMBER}
-      - docker push quay.io/ukhomeofficedigital/hocs-alfresco:latest
-      - docker push quay.io/ukhomeofficedigital/hocs-alfresco:build-${DRONE_BUILD_NUMBER}
+    - docker login -u="ukhomeofficedigital+hocs_alfresco" -p=${DOCKER_PASSWORD} quay.io
+    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco
+    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:build-${DRONE_BUILD_NUMBER}
+    - docker push quay.io/ukhomeofficedigital/hocs-alfresco:latest
+    - docker push quay.io/ukhomeofficedigital/hocs-alfresco:build-${DRONE_BUILD_NUMBER}
     when:
       branch: master
       event: push
@@ -37,34 +37,34 @@ pipeline:
   tag-docker-image-with-git-tag:
     image: docker:1.11
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
+    - DOCKER_HOST=tcp://127.0.0.1:2375
     commands:
-      - docker login -u="ukhomeofficedigital+hocs_alfresco" -p=${DOCKER_PASSWORD} quay.io
-      - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:${DRONE_TAG}
-      - docker push quay.io/ukhomeofficedigital/hocs-alfresco:${DRONE_TAG}
+    - docker login -u="ukhomeofficedigital+hocs_alfresco" -p=${DOCKER_PASSWORD} quay.io
+    - docker tag hocs-alfresco quay.io/ukhomeofficedigital/hocs-alfresco:${DRONE_TAG}
+    - docker push quay.io/ukhomeofficedigital/hocs-alfresco:${DRONE_TAG}
     when:
       event: tag
 
   get-kube-configuration-deployment:
-     image: plugins/git
-     environment:
-       - DOCKER_HOST=tcp://127.0.0.1:2375
-     commands:
-       - git clone https://github.com/UKHomeOffice/kube-hocs-alfresco.git
-     when:
-       event: [push, deployment, tag]
+    image: plugins/git
+    environment:
+    - DOCKER_HOST=tcp://127.0.0.1:2375
+    commands:
+    - git clone https://github.com/UKHomeOffice/kube-hocs-alfresco.git
+    when:
+      event: [push, deployment, tag]
 
   deploy-to-dev-from-build-number:
     image: quay.io/ukhomeofficedigital/kd:v0.2.3
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - KUBE_NAMESPACE=hocs-dev
-      - ENVIRONMENT=dev
-      - VERSION=build-${DRONE_BUILD_NUMBER}
-      - KUBE_SERVER=https://kube-dev.dsp.notprod.homeoffice.gov.uk
+    - DOCKER_HOST=tcp://127.0.0.1:2375
+    - KUBE_NAMESPACE=hocs-dev
+    - ENVIRONMENT=dev
+    - VERSION=build-${DRONE_BUILD_NUMBER}
+    - KUBE_SERVER=https://kube-dev.dsp.notprod.homeoffice.gov.uk
     commands:
-      - cd kube-hocs-alfresco
-      - ./deploy.sh
+    - cd kube-hocs-alfresco
+    - ./deploy.sh
     when:
       branch: [master]
       event: [push, tag]
@@ -72,28 +72,28 @@ pipeline:
   deploy-to-qa-from-build-tag:
     image: quay.io/ukhomeofficedigital/kd:v0.2.3
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - KUBE_NAMESPACE=hocs-qa
-      - ENVIRONMENT=qa
-      - VERSION=${DRONE_TAG}
-      - KUBE_SERVER=https://kube-dev.dsp.notprod.homeoffice.gov.uk
+    - DOCKER_HOST=tcp://127.0.0.1:2375
+    - KUBE_NAMESPACE=hocs-qa
+    - ENVIRONMENT=qa
+    - VERSION=${DRONE_TAG}
+    - KUBE_SERVER=https://kube-dev.dsp.notprod.homeoffice.gov.uk
     commands:
-      - cd kube-hocs-alfresco
-      - ./deploy.sh
+    - cd kube-hocs-alfresco
+    - ./deploy.sh
     when:
       event: [tag]
 
   deploy:
     image: quay.io/ukhomeofficedigital/kd:v0.2.3
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - KUBE_NAMESPACE=hocs-${DRONE_DEPLOY_TO}
-      - ENVIRONMENT=${DRONE_DEPLOY_TO}
-      - VERSION=${IMAGE_VERSION}
-      - KUBE_SERVER=https://kube-dev.dsp.notprod.homeoffice.gov.uk
+    - DOCKER_HOST=tcp://127.0.0.1:2375
+    - KUBE_NAMESPACE=hocs-${DRONE_DEPLOY_TO}
+    - ENVIRONMENT=${DRONE_DEPLOY_TO}
+    - VERSION=${IMAGE_VERSION}
+    - KUBE_SERVER=https://kube-dev.dsp.notprod.homeoffice.gov.uk
     commands:
-      - cd kube-hocs-alfresco
-      - ./deploy.sh
+    - cd kube-hocs-alfresco
+    - ./deploy.sh
     when:
       event: deployment
       environment: [dev, test, qa]
@@ -101,14 +101,14 @@ pipeline:
   deploy-to-prod:
     image: quay.io/ukhomeofficedigital/kd:v0.2.3
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - KUBE_NAMESPACE=hocs
-      - ENVIRONMENT=prod
-      - VERSION=${IMAGE_VERSION}
-      - KUBE_SERVER=https://kube.dsp.digital.homeoffice.gov.uk
+    - DOCKER_HOST=tcp://127.0.0.1:2375
+    - KUBE_NAMESPACE=hocs
+    - ENVIRONMENT=prod
+    - VERSION=${IMAGE_VERSION}
+    - KUBE_SERVER=https://kube.dsp.digital.homeoffice.gov.uk
     commands:
-      - cd kube-hocs-alfresco
-      - ./deploy.sh
+    - cd kube-hocs-alfresco
+    - ./deploy.sh
     when:
       event: deployment
       environment: prod
@@ -118,5 +118,5 @@ services:
     image: docker:1.11-dind
     privileged: true
     command:
-      - "-s"
-      - "overlay"
+    - "-s"
+    - "overlay"
