@@ -126,10 +126,10 @@ public class S3ContentStore extends AbstractContentStore
     public void init() {
         AWSCredentials credentials = null;
         ClientConfiguration clientConfiguration = new ClientConfiguration();
-        if (!StringUtils.isEmpty(signatureVersion)) {
-            LOG.debug("Using client override for signatureVersion: " + signatureVersion);
-            clientConfiguration.setSignerOverride(signatureVersion);
-        }
+        //if (!StringUtils.isEmpty(signatureVersion)) {
+        //    LOG.debug("Using client override for signatureVersion: " + signatureVersion);
+        //    clientConfiguration.setSignerOverride(signatureVersion);
+        //}
 
         clientConfiguration.setConnectionTimeout(connectionTimeout);
         clientConfiguration.setMaxErrorRetry(maxErrorRetry);
@@ -177,7 +177,7 @@ public class S3ContentStore extends AbstractContentStore
                     .standard()
                     .withRegion(regionName)
                     .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                    .withClientConfiguration(clientConfiguration);
+                    .withClientConfiguration(new ClientConfiguration());
             s3Client = s3builder.enablePathStyleAccess().disableChunkedEncoding().build();
         }
 
