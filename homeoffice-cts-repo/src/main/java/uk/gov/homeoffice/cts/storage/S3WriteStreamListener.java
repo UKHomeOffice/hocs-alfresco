@@ -39,7 +39,7 @@ public class S3WriteStreamListener implements ContentStreamListener {
 
 		SSEAwsKeyManagementParams sseParams = new SSEAwsKeyManagementParams(writer.getSseKey());
 
-		PutObjectRequest request = new PutOjectRquest(writer.getBucketName(), writer.getKey(), writer.getTempFile()).withSSEAwsKeyManagementParams(sseParams);
+		PutObjectRequest request = new PutObjectRequest(writer.getBucketName(), writer.getKey(), writer.getTempFile()).withSSEAwsKeyManagementParams(sseParams);
 
 		Upload upload = transferManager.upload(request);
 		//To have transactional consistency it is necessary to wait for the upload to go through before allowing the transaction to commit!
