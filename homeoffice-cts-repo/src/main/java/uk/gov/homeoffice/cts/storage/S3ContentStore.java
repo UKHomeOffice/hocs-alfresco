@@ -124,101 +124,21 @@ public class S3ContentStore extends AbstractContentStore
      * Initialize the content store
      */
     public void init() {
-        AWSCredentials credentials = null;
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        //if (!StringUtils.isEmpty(signatureVersion)) {
-        //    LOG.debug("Using client override for signatureVersion: " + signatureVersion);
-        //    clientConfiguration.setSignerOverride(signatureVersion);
-        //}
 
-        clientConfiguration.setConnectionTimeout(connectionTimeout);
-        clientConfiguration.setMaxErrorRetry(maxErrorRetry);
-        clientConfiguration.setConnectionTTL(connectionTTL);
-        if(this.bucketName.equals("UNSET")) {
-            clientConfiguration.setProtocol(Protocol.HTTP);
-        }
+        EndpointConfiguration endpointConf = new EndpointConfiguration(endpoint, regionName);
+        AmazonS3ClientBuilder s3builder = AmazonS3ClientBuilder
+                .standard()
+                .withEndpointConfiguration(endpointConf)
+                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
+                .withClientConfiguration(new ClientConfiguration());
 
-        if (StringUtils.isNotBlank(this.accessKey) && StringUtils.isNotBlank(this.secretKey)) {
-            LOG.debug("Found credentials in properties file");
-            credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-
-        } else {
-            try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("AWS Credentials not specified in properties, will fallback to credentials provider");
-                }
-                credentials = new ProfileCredentialsProvider().getCredentials();
-            } catch (Exception e) {
-                LOG.error("Can not find AWS Credentials. Trying anonymous.", e);
-                credentials = new AnonymousAWSCredentials();
-            }
-        }
-
-        if (!"".equals(endpoint)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using custom endpoint" + endpoint);
-            }
-            EndpointConfiguration endpointConf = new EndpointConfiguration(endpoint, regionName);
-            AmazonS3ClientBuilder s3builder = AmazonS3ClientBuilder
-                    .standard()
-                    .withEndpointConfiguration(endpointConf)
-                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                    .withClientConfiguration(clientConfiguration);
-
-            s3Client = s3builder.enablePathStyleAccess().disableChunkedEncoding().build();
-
-
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using default Amazon S3 endpoint with region " + regionName);
-            }
-
-            AmazonS3ClientBuilder s3builder = AmazonS3ClientBuilder
-                    .standard()
-                    .withRegion(regionName)
-                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                    .withClientConfiguration(new ClientConfiguration());
-            s3Client = s3builder.enablePathStyleAccess().disableChunkedEncoding().build();
-        }
+        s3Client = s3builder.enablePathStyleAccess().disableChunkedEncoding().build();
 
         transferManager = TransferManagerBuilder
                 .standard()
                 .withS3Client(s3Client)
                 .withMultipartUploadThreshold(multipartUploadThreshold)
                 .build();
-    }
-
-    /**
-     * Test init method to use for local testing with findify s3 mock
-     */
-    public void testInit() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using test init");
-            LOG.debug("Using custom endpoint" + endpoint);
-            LOG.debug("Using default Amazon S3 endpoint with region " + regionName);
-        }
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        if (!StringUtils.isEmpty(signatureVersion)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using client override for signatureVersion: " + signatureVersion);
-            }
-            clientConfiguration.setSignerOverride(signatureVersion);
-        }
-
-        clientConfiguration.setConnectionTimeout(connectionTimeout);
-        clientConfiguration.setMaxErrorRetry(maxErrorRetry);
-        clientConfiguration.setConnectionTTL(connectionTTL);
-
-        EndpointConfiguration endpointConf = new EndpointConfiguration(endpoint, regionName);
-        s3Client = AmazonS3ClientBuilder
-                .standard()
-                .withPathStyleAccessEnabled(true)
-                .withEndpointConfiguration(endpointConf)
-                .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
-                .withClientConfiguration(clientConfiguration)
-                .build();
-
-        transferManager = TransferManagerBuilder.standard().withS3Client(s3Client).build();
     }
 
     public void setAccessKey(String accessKey) {
@@ -358,18 +278,6 @@ public class S3ContentStore extends AbstractContentStore
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(accessKey);
-        Assert.notNull(secretKey);
-        Assert.notNull(bucketName);
-        Assert.notNull(regionName);
-        Assert.notNull(rootDirectory);
-        Assert.notNull(endpoint);
-        Assert.notNull(signatureVersion);
-        Assert.notNull(connectionTimeout);
-        Assert.notNull(connectionTTL);
-        Assert.isTrue(maxErrorRetry >= 0);
-        Assert.isTrue(connectionTTL >= 0);
-        Assert.isTrue(connectionTimeout >= 0);
-        Assert.isTrue(multipartUploadThreshold >= 0);
+        // Do nothing
     }
 }
