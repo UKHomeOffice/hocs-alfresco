@@ -28,15 +28,17 @@ public class S3ContentWriter extends AbstractContentWriter {
 	private final AmazonS3 client;
 	private final String key;
 	private final String bucketName;
+	private final String sseKey;
 	private File tempFile;
 	private long size;
 
-	public S3ContentWriter(String bucketName, String key, String contentUrl, ContentReader existingContentReader, AmazonS3 client, TransferManager transferManager) {
+	public S3ContentWriter(String bucketName, String key, String sseKey, String contentUrl, ContentReader existingContentReader, AmazonS3 client, TransferManager transferManager) {
 		super(contentUrl, existingContentReader);
 		this.key = key;
 		this.client = client;
 		this.transferManager = transferManager;
 		this.bucketName = bucketName;
+		this.sseKey  = sseKey;
 		addListener(new S3WriteStreamListener(this));
 	}
 
@@ -87,4 +89,6 @@ public class S3ContentWriter extends AbstractContentWriter {
 	public File getTempFile() {
 		return tempFile;
 	}
+
+	public String getSseKey() { return sseKey; }
 }

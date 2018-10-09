@@ -1,6 +1,8 @@
 package uk.gov.homeoffice.cts.storage;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.SSEAwsKeyManagementParams;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentStreamListener;
 import org.apache.commons.logging.Log;
@@ -35,7 +37,11 @@ public class S3WriteStreamListener implements ContentStreamListener {
 		}
 		TransferManager transferManager = writer.getTransferManager();
 
-		Upload upload = transferManager.upload(writer.getBucketName(), writer.getKey(), writer.getTempFile());
+		SSEAwsKeyManagementParams sseParams = new SSEAwsKeyManagementParams(writer.getSseKey());
+
+		PutObjectRequest request = new PutOjectRquest(writer.getBucketName(), writer.getKey(), writer.getTempFile()).withSSEAwsKeyManagementParams(sseParams);
+
+		Upload upload = transferManager.upload(request);
 		//To have transactional consistency it is necessary to wait for the upload to go through before allowing the transaction to commit!
 		try {
 			if (LOG.isTraceEnabled()) {

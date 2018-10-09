@@ -2,6 +2,7 @@
 
 sed -i 's/${alfresco.s3.accesskey}/'"$ALF_S3_ACCESSKEY"'/' /usr/local/tomcat/shared/classes/alfresco-global.properties
 sed -i 's@${alfresco.s3.secretkey}@'"$ALF_S3_SECRETKEY"'@' /usr/local/tomcat/shared/classes/alfresco-global.properties
+sed -i 's@${alfresco.s3.ssekey}@'"$ALF_S3_SSEKEY"'@' /usr/local/tomcat/shared/classes/alfresco-global.properties
 sed -i 's/${alfresco.s3.bucketname}/'"$ALF_S3_BUCKETNAME"'/' /usr/local/tomcat/shared/classes/alfresco-global.properties
 sed -i 's/${alfresco.s3.hostname}/'"$ALF_S3_HOSTNAME"'/' /usr/local/tomcat/shared/classes/alfresco-global.properties
 sed -i 's/${alfresco.db.username}/'"$ALF_DB_USERNAME"'/' /usr/local/tomcat/shared/classes/alfresco-global.properties

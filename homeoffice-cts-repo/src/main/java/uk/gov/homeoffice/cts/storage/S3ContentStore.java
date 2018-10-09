@@ -64,6 +64,7 @@ public class S3ContentStore extends AbstractContentStore
     private int maxErrorRetry = 5;
     private long connectionTTL = 60000L;
     private long multipartUploadThreshold = 16777216L;
+    private String sseKey;
 
     /**
      * @see
@@ -173,6 +174,10 @@ public class S3ContentStore extends AbstractContentStore
         this.rootDirectory = dir;
     }
 
+    public void setSseKey(String sseKey) {
+        this.sseKey = sseKey;
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -189,7 +194,7 @@ public class S3ContentStore extends AbstractContentStore
 
         String key = makeS3Key(contentUrl);
 
-        return new S3ContentWriter(bucketName, key, contentUrl, existingContentReader, s3Client, transferManager);
+        return new S3ContentWriter(bucketName, key, sseKey, contentUrl, existingContentReader, s3Client, transferManager);
 
     }
 
