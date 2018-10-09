@@ -124,11 +124,9 @@ public class S3ContentStore extends AbstractContentStore
      * Initialize the content store
      */
     public void init() {
-
-        EndpointConfiguration endpointConf = new EndpointConfiguration(endpoint, regionName);
         AmazonS3ClientBuilder s3builder = AmazonS3ClientBuilder
                 .standard()
-                .withEndpointConfiguration(endpointConf)
+                .withRegion(regionName)
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
                 .withClientConfiguration(new ClientConfiguration());
 
