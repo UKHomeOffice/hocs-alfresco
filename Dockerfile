@@ -78,7 +78,6 @@ RUN groupadd -r ${GROUP} && \
     chown -R ${USER}:${GROUP} /usr/local/alfresco/
 
 ENTRYPOINT ["./entrypoint.sh"]
-
 EXPOSE 8080
 
 USER ${USER_ID}
