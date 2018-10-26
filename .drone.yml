@@ -84,7 +84,7 @@ pipeline:
     - hocs_alfresco_dev
     - hocs_alfresco_qa
     commands:
-    - cd kube-hocs-casework
+    - cd kube-hocs-alfresco
     - ./deploy.sh
     when:
       event: deployment
