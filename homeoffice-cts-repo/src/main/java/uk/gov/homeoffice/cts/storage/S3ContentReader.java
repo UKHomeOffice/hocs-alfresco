@@ -158,9 +158,9 @@ public class S3ContentReader extends AbstractContentReader implements AutoClosea
 		S3Object object = null;
 
 		try {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("GETTING OBJECT - BUCKET: " + bucket + " KEY: " + key);
-			}
+			//if (LOG.isDebugEnabled()) {
+				LOG.info("GETTING OBJECT - BUCKET: " + bucket + " KEY: " + key);
+			//}
 			object = s3Client.getObject(bucket, key);
 		} catch (Exception e) {
 			LOG.error("Unable to fetch S3 Object", e);
