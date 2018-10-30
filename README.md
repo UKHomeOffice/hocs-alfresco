@@ -1,5 +1,2 @@
 # hocs-alfresco.
 
-
-
-
