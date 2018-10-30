@@ -63,9 +63,9 @@ public class S3ContentReader extends AbstractContentReader implements AutoClosea
 	 */
 	protected void lazyInitFileObject() {
 		if (s3Object == null) {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Lazy init for file object for " + bucket + " - " + key);
-			}
+			//if (LOG.isTraceEnabled()) {
+				LOG.info("Lazy init for file object for " + bucket + " - " + key);
+			//}
 			this.s3Object = getObject();
 		}
 	}
