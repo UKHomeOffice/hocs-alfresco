@@ -7,7 +7,7 @@ JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote"
 JAVA_OPTS="$JAVA_OPTS -XX:ReservedCodeCacheSize=1024m"
 JAVA_OPTS="$JAVA_OPTS -Xms1024m -Xmx8500m -XX:MaxPermSize=1536M -Djavax.net.ssl.trustStore=/data/truststore.jks" # java-memory-settings
 
-export CATALINA_OPTS=" -Xmx=3G -Xms=1G"
+export CATALINA_OPTS=" -Xmx=2G -Xms=1G"
 
 # service:jmx:rmi:///jndi/rmi://192.168.1.33:9999/jmxrmi
 #JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.rmi.port=9999"
