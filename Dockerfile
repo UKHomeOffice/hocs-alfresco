@@ -8,7 +8,7 @@ RUN yum install -y unzip sed zip tar mysql libreoffice-headless libreoffice-draw
     && yum clean all
 
 ENV ALF_DOWNLOAD_URL https://download.alfresco.com/release/community/4.2.f-build-00012/alfresco-community-4.2.f.zip
-ENV TOMCAT_TGZ_URL=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.82/bin/apache-tomcat-7.0.82.tar.gz
+ENV TOMCAT_TGZ_URL=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.91/bin/apache-tomcat-7.0.91.tar.gz
 
 ENV ALF_HOME /usr/local/alfresco
 ENV CATALINA_HOME /usr/local/tomcat
