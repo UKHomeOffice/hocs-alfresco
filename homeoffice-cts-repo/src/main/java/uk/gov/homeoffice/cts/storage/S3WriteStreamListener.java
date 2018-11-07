@@ -32,9 +32,8 @@ public class S3WriteStreamListener implements ContentStreamListener {
 		long size = file.length();
 		writer.setSize(size);
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Writing to s3://" + writer.getBucketName() + "/" + writer.getKey());
-		}
+		LOG.info("Writing to s3://" + writer.getBucketName() + "/" + writer.getKey());
+
 		TransferManager transferManager = writer.getTransferManager();
 
 		SSEAwsKeyManagementParams sseParams = new SSEAwsKeyManagementParams(writer.getSseKey());
@@ -44,14 +43,14 @@ public class S3WriteStreamListener implements ContentStreamListener {
 		Upload upload = transferManager.upload(request);
 		//To have transactional consistency it is necessary to wait for the upload to go through before allowing the transaction to commit!
 		try {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Waiting for upload result for bucket " + writer.getBucketName() + " with key " + writer.getKey());
-			}
+
+			LOG.info("Waiting for upload result for bucket " + writer.getBucketName() + " with key " + writer.getKey());
 			upload.waitForUploadResult();
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Upload completed for bucket " + writer.getBucketName() + " with key " + writer.getKey());
-			}
+
+			LOG.info("Upload completed for bucket " + writer.getBucketName() + " with key " + writer.getKey());
 		} catch (Exception e) {
+			LOG.info("Upload failed for bucket " + writer.getBucketName() + " with key " + writer.getKey());
+			LOG.info(e.toString());
 			throw new ContentIOException("S3WriterStreamListener Failed to Upload File for bucket " + writer.getBucketName() + " with key " + writer.getKey(), e);
 		} finally {
 			//Remove the temp file
