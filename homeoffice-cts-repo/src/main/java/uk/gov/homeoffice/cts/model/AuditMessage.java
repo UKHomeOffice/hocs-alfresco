@@ -37,7 +37,7 @@ public class AuditMessage {
         Map<String, String> retMap = new HashMap<>();
 
         for(Map.Entry<QName, Serializable> entry : map.entrySet()) {
-            System.out.print(entry);
+            //System.out.print(entry);
             String value = "null";
             if(entry.getValue() != null) {
                 value = entry.getValue().toString();

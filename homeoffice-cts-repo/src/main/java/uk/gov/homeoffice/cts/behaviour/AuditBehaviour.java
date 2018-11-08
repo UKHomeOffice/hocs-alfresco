@@ -111,10 +111,10 @@ public class AuditBehaviour implements PropertyUpdateBehaviour {
 
         if(response.getStatusCode() != HttpStatus.OK)
         {
-            System.out.println("Sent via Rest FAILED");
-            LOGGER.info(msg);
+            //System.out.println("Sent via Rest FAILED");
+            //LOGGER.info(msg);
         } else {
-            System.out.println("Sent via Rest");
+            //System.out.println("Sent via Rest");
         }
     }
 }
