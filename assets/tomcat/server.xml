@@ -19,7 +19,7 @@
 
   <Service name="Catalina">
 
-    <Connector port="8080" maxThreads="300" acceptCount="150" URIEncoding="UTF-8" protocol="org.apache.coyote.http11.Http11NioProtocol" connectionTimeout="20000" maxHttpHeaderSize="32768" />
+    <Connector port="8080" maxThreads="800" URIEncoding="UTF-8" protocol="org.apache.coyote.http11.Http11NioProtocol" connectionTimeout="20000" maxHttpHeaderSize="32768" />
 
     <Engine name="Catalina" defaultHost="localhost">
 
