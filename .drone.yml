@@ -66,6 +66,7 @@ pipeline:
     - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk
     secrets:
     - hocs_alfresco_dev
+    - poise_whitelist
     commands:
     - cd kube-hocs-alfresco
     - ./deploy.sh
@@ -82,6 +83,7 @@ pipeline:
     secrets:
     - hocs_alfresco_dev
     - hocs_alfresco_qa
+    - poise_whitelist
     commands:
     - cd kube-hocs-alfresco
     - ./deploy.sh
@@ -98,6 +100,7 @@ pipeline:
     - KUBE_SERVER=https://kube-api-prod.prod.acp.homeoffice.gov.uk
     secrets:
     - hocs_alfresco_prod
+    - poise_whitelist
     commands:
     - cd kube-hocs-alfresco
     - ./deploy.sh
