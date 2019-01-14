@@ -1,1 +1,1 @@
-# hocs-alfresco.
+# hocs-alfresco
