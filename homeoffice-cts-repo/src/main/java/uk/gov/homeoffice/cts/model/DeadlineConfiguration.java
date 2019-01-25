@@ -4,7 +4,7 @@ package uk.gov.homeoffice.cts.model;
 public interface DeadlineConfiguration {
 
     //DCU
-    Integer DCU_MINISTERIAL_CASE_RESPONSE_DEADLINE = 15;
+    Integer DCU_MINISTERIAL_CASE_RESPONSE_DEADLINE = 20;
     Integer DCU_MINISTERIAL_ALLOCATE_TARGET = 2;
     Integer DCU_MINISTERIAL_DRAFT_RESPONSE_TARGET = 10;
     Integer DCU_MINISTERIAL_PO_TARGET = 11;
